@@ -2,7 +2,7 @@ import Conversation from "../models/conversation.model.js";
 import Message from "../models/message.model.js"
 export const sendMessage= async(req,res)=>{
     try{
-        const {message}=req.body;
+        let {message}=req.body;
         const {id:receiverId}=req.params;
         const senderId=req.user._id;
         const conversation=await Conversation.findOne({
@@ -34,15 +34,17 @@ export const sendMessage= async(req,res)=>{
 }
 
 export const getMessage=async(req,res)=>{
+    console.log('got request');
     try{
-        const {id: toid}=req.params;
-        const senderId=req.user._id;
+        let {id: toid}=req.params;
+        let senderId=req.user._id;
         
         let conversation=await Conversation.findOne({
             participents:{$all : [senderId,toid]}
         }).populate("messages");
         if(!conversation) return res.status(200).json([]);
-        res.status(200).json(conversation.messages)
+        res.status(200).json(conversation.messages);
+        
     }
     catch(error){
         console.log("error in send message controller:",error.message);

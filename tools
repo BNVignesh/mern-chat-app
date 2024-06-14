@@ -1,0 +1,5 @@
+react-icons
+react-hot-toast        for errors
+daisy ui               for tailwind css ui
+zustand                for globalcontext (instead of usecontext)
+avatar-placeholder     for profilepic

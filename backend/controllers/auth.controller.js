@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import bycrypt from "bcryptjs";
 import generateToken from "../utils/generateToken.js";
 export const loginuser = async (req, res) => {
+    
     try {
         const { username, password } = req.body;
         const user = await User.findOne({ username });
@@ -14,8 +15,10 @@ export const loginuser = async (req, res) => {
         res.status(200).json({
             fullname: user.fullName,
             username: user.username,
-            profilePic: user.profilePic
+            profilePic: user.profilePic,
+            _id:user._id
         });
+        
     } catch (error) {
         console.log("error in login controller :", error);
         res.status(500).json({ error: "internal server error" });
@@ -41,9 +44,10 @@ export const logoutuser =  (req, res) => {
 
 export const signup = async (req, res) => {
     try {
+        console.log(req.body);
         const { fullName, username, password, confirmPassword, gender } = req.body;
 
-        if (password != confirmPassword) {
+        if (password !== confirmPassword) {
             return res.status(400).json({ error: "passwords does not match" });
         }
         const user = await User.findOne({ username });

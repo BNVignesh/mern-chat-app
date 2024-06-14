@@ -1,23 +1,36 @@
 import React from 'react'
+import { useAuthContext } from '../../context/AuthContext';
+import useConversation from '../../conversation/useConversation';
 
-const Message = () => {
+const Message = ({ message }) => {
+    const { authUser } = useAuthContext();
+    const { selectedConversation } = useConversation();
+    const fromMe = message.senderId === authUser._id;
+
+    const className = fromMe ? 'chat-end' : 'chat-start';
+    const profilePic = fromMe ? authUser.profilePic : selectedConversation?.profilePic;
+    const bubblebgcolor = fromMe ? 'bg-blue-500' : '';
+
+    // Format the createdAt timestamp to only show the time
+    const messageTime = new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
     return (
-        <div className="chat chat-start">
+        <div className={`chat ${className}`}>
             <div className="chat-image avatar">
                 <div className="w-10 rounded-full">
-                    <img alt="Tailwind CSS chat bubble component" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                    <img alt="Profile" src={profilePic} />
                 </div>
             </div>
             <div className="chat-header">
-                Obi-Wan Kenobi
-                <time className="text-xs opacity-50">12:45</time>
+                {fromMe ? authUser.name : selectedConversation?.name}
+                <time className="text-xs opacity-50">{messageTime}</time>
             </div>
-            <div className="chat-bubble text-white bg-blue-500">You were the Chosen One!</div>
+            <div className={`chat-bubble text-white ${bubblebgcolor}`}>{message.message}</div>
             <div className="chat-footer opacity-50 text-xs flex items-center">
                 Delivered
             </div>
         </div>
-    )
+    );
 }
 
-export default Message
+export default Message;
