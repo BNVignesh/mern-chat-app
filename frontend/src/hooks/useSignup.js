@@ -5,7 +5,7 @@ import { useAuthContext } from '../context/AuthContext';
 import { json } from 'react-router-dom';
 const useSignup = () => {
     const [loading,setLoading]=useState(false);
-    const {authUser,setAuthUser}=useAuthContext();
+    const {setAuthUser}=useAuthContext();
   const signup=async ({fullName,username,password,confirmPassword,gender})=>{
     const success=handleInpurError({fullName,username,password,confirmPassword,gender});
     if(!success)return;

@@ -1,15 +1,20 @@
 import User from "../models/user.model.js";
-import bycrypt from "bcryptjs";
+import bcrypt from "bcryptjs";
 import generateToken from "../utils/generateToken.js";
 export const loginuser = async (req, res) => {
     
     try {
         const { username, password } = req.body;
         const user = await User.findOne({ username });
-        const ispasscorrect = await bycrypt.compare(password, user?.password || "");
-        if (!user || !ispasscorrect) {
-            return res.status(400).json({ error: "invalid login credentials" });
 
+        if (!user) {
+            return res.status(400).json({ error: "Invalid login credentials" });
+        }
+
+        const ispasscorrect = await bcrypt.compare(password, user.password);
+
+        if (!ispasscorrect) {
+            return res.status(400).json({ error: "Invalid login credentials" });
         }
         generateToken(user._id, res);
         res.status(200).json({
@@ -29,17 +34,21 @@ export const loginuser = async (req, res) => {
 
 }
 
-export const logoutuser =  (req, res) => {
+export const logoutuser = (req, res) => {
     try {
-        res.cookie("jwt", "", { maxAge: 0 });
-        res.status(200).json({ meesage: "logged out succfully" });
+        res.cookie("jwt", "", {
+            maxAge: 0,
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== 'development',
+            sameSite: 'strict'
+        });
+        res.status(200).json({ message: "Logged out successfully" });
+    } catch (error) {
+        console.log("Error in logout controller: ", error);
+        res.status(500).json({ error: "Internal server error" });
     }
-    catch (error) {
-        console.log("error in logout controller: ", error);
-        res.status(500).json({ error: "internal server error" });
-    }
+};
 
-}
 
 
 export const signup = async (req, res) => {
