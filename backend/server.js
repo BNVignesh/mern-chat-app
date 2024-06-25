@@ -13,7 +13,7 @@ import {app,server} from './socket/socket.js'
 app.use(express.json())
 app.use(cookieParser());
 app.use(cors({
-    origin:"https://public-chat-app-jkbk.onrender.com/login",
+    origin:"https://public-chat-app-jkbk.onrender.com",
     credentials:true
 }));
 const PORT=process.env.PORT || 5000
